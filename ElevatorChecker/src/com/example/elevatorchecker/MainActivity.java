@@ -44,7 +44,7 @@ public class MainActivity extends Activity {
         lightReader = new LightReader(this);
         
         
-        speakerPlayer = new SpeakerPlayer("/sdcard/Music/recorder.wav");
+        speakerPlayer = new SpeakerPlayer("/sdcard/Music/white_noise.wav");
         
         audioRecorder = new AudioRecorder("/sdcard/Music/recorder.wav");
         
