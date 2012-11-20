@@ -1,5 +1,7 @@
 package com.example.elevatorchecker;
 
+import java.io.FileOutputStream;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.Menu;
@@ -25,12 +27,22 @@ public class MainActivity extends Activity {
 	
 	private AudioRecorder audioRecorder;
 	
+	private AudioHandler audioHandler;
+	
 	private Button beginButton;
 	private Button endButton;
 	
 	private Button recBeginButton;
 	private Button recEndButton;
 	
+	
+	private FileOutputStream fileOutputStream = null;
+	
+	public void writeLog(String str) {
+		if(fileOutputStream != null) {
+			
+		}
+	}
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +58,9 @@ public class MainActivity extends Activity {
         
         speakerPlayer = new SpeakerPlayer("/sdcard/Music/white_noise.wav");
         
-        audioRecorder = new AudioRecorder("/sdcard/Music/recorder.wav");
+        audioRecorder = new AudioRecorder("/sdcard/Music/recorder_new.3gp");
+        
+        audioHandler = new AudioHandler();
         
         beginButton = (Button) this.findViewById(R.id.begin_button);
         endButton = (Button) this.findViewById(R.id.end_button);
@@ -59,6 +73,7 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
+				
 				speakerPlayer.start();
 				
 			}
@@ -70,7 +85,19 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
+				
 				speakerPlayer.pause();
+				
+				/*
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				fileOutputStream = null;
+				
+				*/
 			}
         	
         });
@@ -80,8 +107,8 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				audioRecorder.start();
-				
+				//audioRecorder.start();
+				audioHandler.start();
 			}
         	
         });
@@ -91,8 +118,9 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
-				audioRecorder.stop();
-				audioRecorder = new AudioRecorder("/sdcard/Music/recorder.wav");
+				audioHandler.stop();
+				//audioRecorder.stop();
+				//audioRecorder = new AudioRecorder("/sdcard/Music/recorder.wav");
 				
 			}
         	

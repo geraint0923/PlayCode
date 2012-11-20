@@ -3,6 +3,7 @@ package com.example.elevatorchecker;
 import java.io.File;
 import java.io.IOException;
 
+import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.widget.EditText;
 
@@ -17,17 +18,19 @@ public class AudioRecorder {
 	
 	private MediaRecorder recorder;
 	
+	
 	public AudioRecorder(String path) {
 		recorder = new MediaRecorder();
 		
 		recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
 		
-		recorder.setOutputFormat(MediaRecorder.OutputFormat.DEFAULT); 
+		recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP); 
 		
-		recorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+		recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 		
 		recorder.setAudioSamplingRate(44100);
 		
+		/*
 		File file = new File("/sdcard/Music/recorder.wav");
 		if(!file.exists()) {
 			try {
@@ -37,6 +40,7 @@ public class AudioRecorder {
 				e.printStackTrace();
 			}
 		}
+		*/
 		
 		recorder.setOutputFile(path);  
 		
@@ -62,7 +66,6 @@ public class AudioRecorder {
 	public void stop() {
 		if(isRecording) {
 			recorder.stop();
-			recorder.release();
 			canUse = false;
 		}
 	}
