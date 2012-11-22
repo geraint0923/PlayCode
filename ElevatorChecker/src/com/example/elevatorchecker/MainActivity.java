@@ -27,7 +27,7 @@ public class MainActivity extends Activity {
 	
 	private AudioRecorder audioRecorder;
 	
-	private AudioHandler audioHandler;
+	private AudioHandler audioHandler = null;
 	
 	private Button beginButton;
 	private Button endButton;
@@ -60,13 +60,16 @@ public class MainActivity extends Activity {
         
         audioRecorder = new AudioRecorder("/sdcard/Music/recorder_new.3gp");
         
-        audioHandler = new AudioHandler();
+        
         
         beginButton = (Button) this.findViewById(R.id.begin_button);
         endButton = (Button) this.findViewById(R.id.end_button);
         
         recBeginButton = (Button) this.findViewById(R.id.recorder_begin);
         recEndButton = (Button) this.findViewById(R.id.recorder_end);
+        
+        recBeginButton.setEnabled(true);
+        recEndButton.setEnabled(false);
         
         beginButton.setOnClickListener(new Button.OnClickListener() {
 
@@ -108,7 +111,10 @@ public class MainActivity extends Activity {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				//audioRecorder.start();
+				audioHandler = new AudioHandler();
 				audioHandler.start();
+				recBeginButton.setEnabled(false);
+				recEndButton.setEnabled(true);
 			}
         	
         });
@@ -119,6 +125,9 @@ public class MainActivity extends Activity {
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				audioHandler.stop();
+				recBeginButton.setEnabled(true);
+				recEndButton.setEnabled(false);
+				
 				//audioRecorder.stop();
 				//audioRecorder = new AudioRecorder("/sdcard/Music/recorder.wav");
 				

@@ -44,8 +44,16 @@ public class AudioHandler implements Runnable {
 		if(isRecording)
 			return;
 		isRecording = true;
+		int idx = 0;
+		File file;
+		while(true) {
+			file = new File("/sdcard/Music/audio_raw_" + idx + ".txt");
+			++idx;
+			if(!file.exists())
+				break;
+		}
 		try {
-			fileOutputStream = new FileOutputStream(new File("/sdcard/Music/audio_raw"));
+			fileOutputStream = new FileOutputStream(file);
 			bufferList = new ArrayList<IOBase>();
 			new Thread(this).start();
 		} catch (FileNotFoundException e) {
