@@ -14,6 +14,34 @@ public class BSSInfo {
 	private double[] supportedRates;
 	private double[] extendedSupportedRates;
 	
+	public String toString() {
+		StringBuilder string = new StringBuilder("SSID : ");
+		if(string == null)
+			return null;
+		string.append(ssid + "\n");
+		string.append("BSSID : " + bssid + "\n");
+		string.append("Channel : " + channel + "\n");
+		string.append("Frequency : " + frequency + " MHz\n");
+		string.append("Signal : " + signal + " dBm\n");
+		string.append("Beacon Interval : " + beaconInterval + " ms\n");
+		
+		string.append("Supported Rates : ");
+		if(supportedRates != null) {
+			for(int i = 0; i < supportedRates.length; ++i) {
+				string.append(supportedRates[i] + " ");
+			}
+		}
+
+		string.append("\nExtended Supported Rates : ");
+		if(extendedSupportedRates != null) {
+			for(int i = 0; i < extendedSupportedRates.length; ++i) {
+				string.append(extendedSupportedRates[i] + " ");
+			}
+		}
+		string.append("\n");
+		return string.toString();
+	}
+	
 	public String getSSID () {
 		return ssid;
 	}
@@ -36,7 +64,7 @@ public class BSSInfo {
 	public void setSSID(String in) {
 		ssid = new String(in);
 	}
-	public void getBSSID(String in) {
+	public void setBSSID(String in) {
 		bssid = new String(in);
 	}
 	public void setChannel(int ch) {
