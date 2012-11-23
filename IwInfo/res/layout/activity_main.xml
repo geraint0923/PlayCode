@@ -1,7 +1,54 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity" >
 
-</RelativeLayout>
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="4dp"
+        android:layout_y="9dp"
+        android:text="Location"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <ExpandableListView
+        android:id="@+id/BSSListView"
+        android:layout_width="match_parent"
+        android:layout_height="309dp"
+        android:layout_x="0dp"
+        android:layout_y="98dp" >
+    </ExpandableListView>
+
+    <EditText
+        android:id="@+id/location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="98dp"
+        android:layout_y="8dp"
+        android:ems="10"
+        android:inputType="textPersonName" >
+
+        <requestFocus />
+    </EditText>
+
+    <Button
+        android:id="@+id/scanButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="48dp"
+        android:layout_marginLeft="60dp"
+        android:layout_x="10dp"
+        android:layout_y="47dp"
+        android:text="Scan and Log" />
+
+    <TextView
+        android:id="@+id/resultView"
+        android:layout_width="112dp"
+        android:layout_height="wrap_content"
+        android:layout_x="174dp"
+        android:layout_y="74dp"
+        android:text="" />
+
+</AbsoluteLayout>

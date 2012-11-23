@@ -16,8 +16,6 @@ public class BSSInfo {
 	
 	public String toString() {
 		StringBuilder string = new StringBuilder("SSID : ");
-		if(string == null)
-			return null;
 		string.append(ssid + "\n");
 		string.append("BSSID : " + bssid + "\n");
 		string.append("Channel : " + channel + "\n");
@@ -92,4 +90,17 @@ public class BSSInfo {
 		}
 	}
 	
+	
+	public boolean equals(Object obj) {
+		if(obj == null)
+			return false;
+		if(obj instanceof BSSInfo) {
+			BSSInfo info = (BSSInfo) obj;
+			if(info.ssid != null && info.bssid != null && info.ssid.equals(ssid) && info.bssid.equals(bssid)) {
+				return true;
+			}
+			return false;
+		}
+		return false;
+	}
 }
