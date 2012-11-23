@@ -65,6 +65,9 @@ public class MainActivity extends Activity {
         beginButton = (Button) this.findViewById(R.id.begin_button);
         endButton = (Button) this.findViewById(R.id.end_button);
         
+        beginButton.setEnabled(true);
+        endButton.setEnabled(false);
+        
         recBeginButton = (Button) this.findViewById(R.id.recorder_begin);
         recEndButton = (Button) this.findViewById(R.id.recorder_end);
         
@@ -78,6 +81,8 @@ public class MainActivity extends Activity {
 				// TODO Auto-generated method stub
 				
 				speakerPlayer.start();
+				beginButton.setEnabled(false);
+				endButton.setEnabled(true);
 				
 			}
         	
@@ -90,6 +95,8 @@ public class MainActivity extends Activity {
 				// TODO Auto-generated method stub
 				
 				speakerPlayer.pause();
+				beginButton.setEnabled(true);
+				endButton.setEnabled(false);
 				
 				/*
 				try {
