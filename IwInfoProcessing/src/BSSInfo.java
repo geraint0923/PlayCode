@@ -1,4 +1,4 @@
-package com.thu.iwinfo;
+
 
 
 
@@ -99,7 +99,6 @@ public class BSSInfo {
 			if(info.ssid != null && info.bssid != null && info.ssid.equals(ssid) && info.bssid.equals(bssid)) {
 				return true;
 			}
-			return false;
 		}
 		return false;
 	}

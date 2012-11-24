@@ -1,4 +1,4 @@
-package com.thu.iwinfo;
+
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,10 +18,49 @@ public class IwInfoParser {
 	
 	public static void main(String args[]) {
 		IwInfoParser parser = new IwInfoParser();
-		List<BSSInfo> bssList = parser.parseIwInfoFile("iw_log");
+		List<BSSInfo> bssList = parser.parseIwInfoFile("special/iw_inside.log");
 		for(int i = 0; i < bssList.size(); ++i) {
 			System.out.println(bssList.get(i));
 		}
+		System.out.println("Size:" + bssList.size());
+		int[] num = new int[4];
+		num[0] = 17;
+		num[1] = 15;
+		num[2] = 14;
+		num[3] = 12;
+		String[] mark = new String[2];
+		mark[0] = new String("b");
+		mark[1] = new String("a");
+		int count = 0;
+		for(int i = 1; i <= 3; ++i) {
+			for(int j = 0; j < num.length; ++j) {
+				for(int k = 0; k < mark.length; ++k) {
+					String path = "iwlog/iw_" + i + "" + num[j] + mark[k] + ".log";
+					//System.out.println(path);
+					System.out.print(i + "" + num[j] + mark[k] + " ");
+					List<BSSInfo> tmpList = parser.parseIwInfoFile(path);
+					for(int idx = 0; idx < bssList.size(); ++idx) {
+						BSSInfo info = bssList.get(idx);
+						boolean found = false;
+						System.out.print("&");
+						for(int ii = 0; ii < tmpList.size(); ++ ii) {
+							if(info.equals(tmpList.get(ii))) {
+								System.out.print(" " + tmpList.get(ii).getSignal() + " ");
+								found = true;
+								break;
+							}
+						}
+						if(!found)
+							System.out.print(" - ");
+					}
+					System.out.println("\\\\\n\\hline");
+					
+					++count;
+				}
+			}
+		}
+		System.out.println("count:"+count);
+		
 		
 	}
 	
