@@ -27,35 +27,42 @@
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <Button
-        android:id="@+id/end_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_x="172dp"
-        android:layout_y="321dp"
-        android:text="Pause" />
-
-    <Button
         android:id="@+id/begin_button"
         android:layout_width="77dp"
         android:layout_height="wrap_content"
-        android:layout_x="62dp"
-        android:layout_y="323dp"
+        android:layout_x="63dp"
+        android:layout_y="356dp"
         android:text="Play" />
+
+    <Button
+        android:id="@+id/end_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="174dp"
+        android:layout_y="354dp"
+        android:text="Pause" />
 
     <Button
         android:id="@+id/recorder_begin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_x="59dp"
-        android:layout_y="206dp"
+        android:layout_x="53dp"
+        android:layout_y="305dp"
         android:text="Rec Begin" />
 
     <Button
         android:id="@+id/recorder_end"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_x="168dp"
-        android:layout_y="204dp"
+        android:layout_x="177dp"
+        android:layout_y="306dp"
         android:text="Rec End" />
+
+    <SurfaceView
+        android:id="@+id/test_surface"
+        android:layout_width="match_parent"
+        android:layout_height="173dp"
+        android:layout_x="0dp"
+        android:layout_y="66dp" />
 
 </AbsoluteLayout>

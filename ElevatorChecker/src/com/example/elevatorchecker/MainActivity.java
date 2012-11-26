@@ -4,7 +4,13 @@ import java.io.FileOutputStream;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.view.Menu;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -29,6 +35,9 @@ public class MainActivity extends Activity {
 	
 	private AudioHandler audioHandler = null;
 	
+	private SurfaceView surface = null;
+	private SurfaceHolder holder = null;
+	
 	private Button beginButton;
 	private Button endButton;
 	
@@ -44,6 +53,65 @@ public class MainActivity extends Activity {
 		}
 	}
 	
+	class SurfaceCallback implements SurfaceHolder.Callback {
+
+		@Override
+		public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2,
+				int arg3) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void surfaceCreated(SurfaceHolder arg0) {
+			// TODO Auto-generated method stub
+			int x = 0;
+			int y = 0;
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					int count = 0;
+					System.out.println("OK!");
+
+					while(count < 10) {
+						
+						int width = surface.getWidth();
+						int wp = width / 20;
+						int height = surface.getHeight();
+						int hp = height / 20;
+						
+						
+						Canvas canvas = holder.lockCanvas();
+						Paint paint = new Paint();
+						paint.setColor(Color.BLUE);
+						canvas.drawRect(new Rect(wp * count, hp * count, width - wp * count, height - hp * count ), paint);
+						System.out.println("count up!!! " + count +" "+ (wp * count) +" "+ (hp * count)+" "+ (width - wp * count)+" "+ (height - hp * count) + "width:"+width +" height:"+height);
+						holder.unlockCanvasAndPost(canvas);
+						++count;
+						//lightView.setText("Now Count:" + count);
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+					}
+				}
+				
+			}).start();
+		}
+
+		@Override
+		public void surfaceDestroyed(SurfaceHolder arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+	}
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +121,17 @@ public class MainActivity extends Activity {
         
         
         lightView = (EditText) this.findViewById(R.id.light_text_view);
-        lightReader = new LightReader(this);
+        
+        surface = (SurfaceView) this.findViewById(R.id.test_surface);
+        
+        if(surface != null) {
+        	lightView.setText("surface not null");
+        	holder = surface.getHolder();
+        	holder.addCallback(new SurfaceCallback());
+        } else
+        	lightView.setText("surface null!");
+        
+        //lightReader = new LightReader(this);
         
         
         speakerPlayer = new SpeakerPlayer("/sdcard/Music/white_noise.wav");
