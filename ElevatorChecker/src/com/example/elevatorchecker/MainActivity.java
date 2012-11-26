@@ -78,16 +78,35 @@ public class MainActivity extends Activity {
 					while(count < 10) {
 						
 						int width = surface.getWidth();
-						int wp = width / 20;
+						int wp = width / 10;
 						int height = surface.getHeight();
-						int hp = height / 20;
+						int hp = height / 10;
 						
 						
-						Canvas canvas = holder.lockCanvas();
+						Canvas canvas = holder.lockCanvas(new Rect(count*wp,0,(count+1)*wp,height));
+						
 						Paint paint = new Paint();
 						paint.setColor(Color.BLUE);
-						canvas.drawRect(new Rect(wp * count, hp * count, width - wp * count, height - hp * count ), paint);
-						System.out.println("count up!!! " + count +" "+ (wp * count) +" "+ (hp * count)+" "+ (width - wp * count)+" "+ (height - hp * count) + "width:"+width +" height:"+height);
+						int color = count % 3;
+						switch(color) {
+							case 0:
+								color = Color.RED;
+								break;
+							case 1:
+								color = Color.BLUE;
+								break;
+							case 2:
+								color = Color.GREEN;
+								break;
+							default:
+								color = Color.BLACK;
+								break;
+						}
+						canvas.drawColor(color);
+						//Rect rect = new Rect(wp * count, hp * count, width - wp * count, height - hp * count );
+						//canvas.drawRect(rect, paint);
+						//System.out.println("count up!!! " + count +" "+ (wp * count) +" "+ (hp * count)+" "+ (width - wp * count)+" "+ (height - hp * count) + "width:"+canvas.getWidth() +" height:"+canvas.getHeight());
+						//System.out.println("rect:left:" + rect.left + " top:"+rect.top+" right:"+rect.right+" bottom:"+rect.bottom);
 						holder.unlockCanvasAndPost(canvas);
 						++count;
 						//lightView.setText("Now Count:" + count);
