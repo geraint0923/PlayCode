@@ -65,4 +65,12 @@
         android:layout_x="0dp"
         android:layout_y="66dp" />
 
+    <Button
+        android:id="@+id/take_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="30dp"
+        android:layout_y="251dp"
+        android:text="Take" />
+
 </AbsoluteLayout>

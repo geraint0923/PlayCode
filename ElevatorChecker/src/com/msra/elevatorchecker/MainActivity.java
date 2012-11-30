@@ -6,10 +6,12 @@ import com.msra.elevatorchecker.R;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.hardware.Camera;
 import android.view.Menu;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -46,6 +48,15 @@ public class MainActivity extends Activity {
 	private Button recBeginButton;
 	private Button recEndButton;
 	
+	private Button takeButton;
+	
+	
+	private Camera camera = null;
+	
+	private Bitmap showBitmap = null;
+	
+	private ImageCapturer imageCapturer = null;
+	
 	
 	private FileOutputStream fileOutputStream = null;
 	
@@ -54,6 +65,9 @@ public class MainActivity extends Activity {
 			
 		}
 	}
+	
+	
+	private Runnable runInstance = null;
 	
 	class SurfaceCallback implements SurfaceHolder.Callback {
 
@@ -71,9 +85,13 @@ public class MainActivity extends Activity {
 			int y = 0;
 			new Thread(new Runnable() {
 
+				
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
+					
+					runInstance = this;
+					
 					int count = 0;
 					System.out.println("OK!");
 
@@ -113,12 +131,37 @@ public class MainActivity extends Activity {
 						++count;
 						//lightView.setText("Now Count:" + count);
 						try {
-							Thread.sleep(1000);
+							Thread.sleep(100);
 						} catch (InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						
+					}
+					
+					
+					while(true) {
+						try {
+							//synchronized(this) {
+							//	wait();
+							//}
+							// TODO: add some code for showing the captured pictures.
+							if(imageCapturer == null) {
+								Thread.sleep(1000);
+								continue;
+							}
+							showBitmap = imageCapturer.getBitmap();
+							if(showBitmap != null) {
+								Canvas canvas = holder.lockCanvas(new Rect(0, 0, surface.getWidth(), surface.getHeight()));
+								Paint paint = new Paint();
+								canvas.drawBitmap(showBitmap, 0, 0, paint);
+								holder.unlockCanvasAndPost(canvas);
+							}
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 				}
 				
@@ -152,7 +195,7 @@ public class MainActivity extends Activity {
         } else
         	lightView.setText("surface null!");
         
-        //lightReader = new LightReader(this);
+        lightReader = new LightReader(this);
         
         
         speakerPlayer = new SpeakerPlayer("/sdcard/Music/white_noise.wav");
@@ -172,6 +215,25 @@ public class MainActivity extends Activity {
         
         recBeginButton.setEnabled(true);
         recEndButton.setEnabled(false);
+        
+        takeButton = (Button) this.findViewById(R.id.take_photo);
+        
+        takeButton.setOnClickListener(new Button.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				if(imageCapturer == null) {
+					imageCapturer = new ImageCapturer();
+				}
+				
+				imageCapturer.takePicture();
+				
+				//showBitmap = imageCapturer.getBitmap();
+				//runInstance.notify();				
+			}
+        	
+        });
         
         beginButton.setOnClickListener(new Button.OnClickListener() {
 
