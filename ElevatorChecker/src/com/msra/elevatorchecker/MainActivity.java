@@ -42,12 +42,16 @@ public class MainActivity extends Activity {
 	private SurfaceView surface = null;
 	private SurfaceHolder holder = null;
 	
+	private SurfaceView photoSurface = null;
+	private SurfaceHolder photoHolder = null;
+	
 	private Button beginButton;
 	private Button endButton;
 	
 	private Button recBeginButton;
 	private Button recEndButton;
 	
+	private Button previewButton;
 	private Button takeButton;
 	
 	
@@ -71,6 +75,20 @@ public class MainActivity extends Activity {
 	
 	class SurfaceCallback implements SurfaceHolder.Callback {
 
+		private SurfaceView surface;
+		private SurfaceHolder holder;
+		
+		private boolean isPush = false;
+		
+		public SurfaceCallback(SurfaceView sur, SurfaceHolder ho, boolean isP) {
+			surface = sur;
+			holder = ho;
+			isPush = isP;
+			if(isPush) {
+				holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+			} 
+		}
+		
 		@Override
 		public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2,
 				int arg3) {
@@ -86,9 +104,13 @@ public class MainActivity extends Activity {
 			new Thread(new Runnable() {
 
 				
+				
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
+					
+					System.out.println("Create!!!!!!!!!!!!!!!!***");
+					
 					
 					runInstance = this;
 					
@@ -139,28 +161,30 @@ public class MainActivity extends Activity {
 						
 					}
 					
+					if(!isPush) {
 					
-					while(true) {
-						try {
-							//synchronized(this) {
-							//	wait();
-							//}
-							// TODO: add some code for showing the captured pictures.
-							if(imageCapturer == null) {
+						while(true) {
+							try {
+								//synchronized(this) {
+								//	wait();
+								//}
+								// TODO: add some code for showing the captured pictures.
+								if(imageCapturer == null) {
+									Thread.sleep(1000);
+									continue;
+								}
+								showBitmap = imageCapturer.getBitmap();
+								if(showBitmap != null) {
+									Canvas canvas = holder.lockCanvas(new Rect(0, 0, surface.getWidth(), surface.getHeight()));
+									Paint paint = new Paint();
+									canvas.drawBitmap(showBitmap, 0, 0, paint);
+									holder.unlockCanvasAndPost(canvas);
+								}
 								Thread.sleep(1000);
-								continue;
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
 							}
-							showBitmap = imageCapturer.getBitmap();
-							if(showBitmap != null) {
-								Canvas canvas = holder.lockCanvas(new Rect(0, 0, surface.getWidth(), surface.getHeight()));
-								Paint paint = new Paint();
-								canvas.drawBitmap(showBitmap, 0, 0, paint);
-								holder.unlockCanvasAndPost(canvas);
-							}
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
 						}
 					}
 				}
@@ -175,6 +199,8 @@ public class MainActivity extends Activity {
 		}
 
 	}
+	
+	
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -191,11 +217,24 @@ public class MainActivity extends Activity {
         if(surface != null) {
         	lightView.setText("surface not null");
         	holder = surface.getHolder();
-        	holder.addCallback(new SurfaceCallback());
+        	//holder.addCallback(new SurfaceCallback(surface, holder, true));
         } else
         	lightView.setText("surface null!");
         
-        lightReader = new LightReader(this);
+        
+        photoSurface = (SurfaceView) this.findViewById(R.id.photo_surface);
+        
+        if(photoSurface != null) {
+        	photoHolder = photoSurface.getHolder();
+        	photoHolder.addCallback(new SurfaceCallback(photoSurface, photoHolder, false));
+        	lightView.setText("Photo surface good");
+        	System.out.println("Photo surface work fine.");
+        }
+        
+        
+        
+        
+        //lightReader = new LightReader(this);
         
         
         speakerPlayer = new SpeakerPlayer("/sdcard/Music/white_noise.wav");
@@ -218,19 +257,35 @@ public class MainActivity extends Activity {
         
         takeButton = (Button) this.findViewById(R.id.take_photo);
         
+        previewButton = (Button) this.findViewById(R.id.preview_button);
+        
+        imageCapturer = new ImageCapturer(surface);
+        
+        imageCapturer.openCamera();
+        
         takeButton.setOnClickListener(new Button.OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
 				if(imageCapturer == null) {
-					imageCapturer = new ImageCapturer();
+					imageCapturer = new ImageCapturer(surface);
 				}
 				
 				imageCapturer.takePicture();
 				
 				//showBitmap = imageCapturer.getBitmap();
 				//runInstance.notify();				
+			}
+        	
+        });
+        
+        previewButton.setOnClickListener(new Button.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				imageCapturer.startPreview();
 			}
         	
         });

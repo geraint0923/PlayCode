@@ -1,10 +1,13 @@
 package com.msra.elevatorchecker;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 
 
 
@@ -19,6 +22,14 @@ public class ImageCapturer {
 	
 	public boolean pictureFinished = true;
 	
+	private SurfaceView surface = null;
+	
+	public ImageCapturer(SurfaceView sf) {
+		instance = this;
+		surface = sf;
+		surface.getHolder().setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+	}
+	
 	private Camera.PictureCallback pictureCallback = new Camera.PictureCallback() {
 		
 		
@@ -31,8 +42,8 @@ public class ImageCapturer {
 			System.arraycopy(arg0, 0, buffer, 0, buffer.length);
 			
 			if(camera != null) {
-				camera.release();
-				camera = null;
+				//camera.release();
+				//camera = null;
 			}
 			
 			if(instance != null) {
@@ -43,10 +54,7 @@ public class ImageCapturer {
 			
 		}
 	};
-	
-	public ImageCapturer() {
-		instance = this;
-	}
+
 	
 	public int getWidth() {
 		return width;
@@ -64,7 +72,33 @@ public class ImageCapturer {
 		height = h;
 	}
 	
+	public void openCamera() {
+		camera = Camera.open();
+		try {
+			SurfaceHolder ho = surface.getHolder();
+			System.out.println("holder:"+ho);
+			camera.setPreviewDisplay(ho);
+			camera.startPreview();
+			System.out.println("finish set preview display");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			camera.release();
+			camera = null;
+		}
+	}
+	
+	public void startPreview() {
+		if(camera == null)
+			return;
+		camera.startPreview();
+		System.out.println("finishi start preview!!!!!!");
+	}
+	
 	public void takePicture() {
+		
+		if(camera == null)
+			return;
 		
 		System.out.println("camera::::"+camera);
 		camera = Camera.open();
