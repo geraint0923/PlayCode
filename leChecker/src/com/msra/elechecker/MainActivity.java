@@ -164,5 +164,26 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	
+    @Override  
+    protected void onResume() {  
+        if (camera == null)  
+           	camera = Camera.open();  
+        super.onResume();  
+    } 
+    
+    @Override  
+    protected void onPause() {  
+    	/*
+        if (hasStartPreview) {  
+            mCam.stopPreview();  
+        } 
+        */ 
+        camera.release();  
+        camera = null;  
+        //hasStartPreview = false;  
+        super.onPause();  
+    } 
 
 }
