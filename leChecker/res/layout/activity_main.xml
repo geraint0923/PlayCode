@@ -7,7 +7,7 @@
     <SurfaceView
         android:id="@+id/preview_surface"
         android:layout_width="match_parent"
-        android:layout_height="193dp"
+        android:layout_height="283dp"
         android:layout_marginTop="78dp"
         android:layout_x="0dp"
         android:layout_y="50dp" />
@@ -19,5 +19,12 @@
         android:layout_x="36dp"
         android:layout_y="2dp"
         android:text="Take" />
+
+    <SurfaceView
+        android:id="@+id/photo_surface"
+        android:layout_width="117dp"
+        android:layout_height="94dp"
+        android:layout_x="94dp"
+        android:layout_y="347dp" />
 
 </AbsoluteLayout>

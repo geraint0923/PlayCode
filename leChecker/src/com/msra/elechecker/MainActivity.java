@@ -5,10 +5,16 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.os.Bundle;
 import android.app.Activity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -35,7 +41,10 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 		
 		camera = Camera.open();
 		
+		camera.setDisplayOrientation(90);
+		
 		previewSurface = (SurfaceView) this.findViewById(R.id.preview_surface);
+		photoSurface = (SurfaceView) this.findViewById(R.id.photo_surface);
 		
 		photoButton = (Button) this.findViewById(R.id.photo_button);
 		
@@ -55,6 +64,9 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 		previewHolder.addCallback(this);
 		previewHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 		
+		
+		photoHolder = photoSurface.getHolder();
+		
 	}
 	
 	private PictureCallback pictureCallback = new Camera.PictureCallback() {
@@ -67,13 +79,22 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 			
 			
 			File file = new File("/sdcard/mypic.jpeg");
-			if(!file.exists())
+			if(!file.exists()) {
 				try {
 					file.createNewFile();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			} else {
+				file.delete();
+				try {
+					file.createNewFile();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 			try {
 				FileOutputStream fos = new FileOutputStream(file);
 				fos.write(arg0);
@@ -85,6 +106,29 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			System.out.println("=================I have take a photo!!!!!===================size:"+ arg0);
+			
+			Canvas canvas = photoHolder.lockCanvas();
+			
+			Paint paint = new Paint();
+			Bitmap bitmap = BitmapFactory.decodeFile("/sdcard/mypic.jpeg");
+			
+			Matrix matrix = new Matrix();
+			//matrix.postScale(((float)canvas.getWidth())/bitmap.getWidth(), ((float)canvas.getHeight())/bitmap.getHeight());
+			matrix.postRotate(90);
+			matrix.postScale(((float)canvas.getWidth())/bitmap.getHeight(), ((float)canvas.getHeight())/bitmap.getWidth());
+			
+			bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+			
+			//bitmap = Bitmap.createScaledBitmap(bitmap, canvas.getWidth(), canvas.getHeight(), true);
+			
+			
+			canvas.drawBitmap(bitmap, 0, 0, paint);
+			
+			
+			photoHolder.unlockCanvasAndPost(canvas);
+			//Log.e("println", "scale height and width:"+ sh + ", "+sw);
 			
 		}
 	};
