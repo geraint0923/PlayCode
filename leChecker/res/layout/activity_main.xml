@@ -24,7 +24,14 @@
         android:id="@+id/photo_surface"
         android:layout_width="117dp"
         android:layout_height="94dp"
-        android:layout_x="94dp"
+        android:layout_x="11dp"
+        android:layout_y="346dp" />
+
+    <SurfaceView
+        android:id="@+id/process_surface"
+        android:layout_width="117dp"
+        android:layout_height="94dp"
+        android:layout_x="182dp"
         android:layout_y="347dp" />
 
 </AbsoluteLayout>
