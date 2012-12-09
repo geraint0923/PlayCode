@@ -223,7 +223,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 		    	int green = ((grey & 0x0000FF00) >> 8);
 		    	int blue = (grey & 0x000000FF);
 		
-		    	grey = (int)((float) red * 0.3 + (float)green * 0.59 + (float)blue * 0.11);
+		    	grey = (int)((float) red * 0.229 + (float)green * 0.587 + (float)blue * 0.114);
 		    	grey = alpha | (grey << 16) | (grey << 8) | grey;
 		    	pixels[width * i + j] = grey;
 	    	}
@@ -232,6 +232,4 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
     	result.setPixels(pixels, 0, width, 0, 0, width, height);
     	return result;
     } 
-    
-    
 }
