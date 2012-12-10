@@ -22,7 +22,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 
-public class MainActivity extends Activity implements SurfaceHolder.Callback {
+public class MainActivity extends Activity implements SurfaceHolder.Callback,ICamera,ICheckerCallback {
 
 	private SurfaceView previewSurface = null;
 	private SurfaceHolder previewHolder = null;
@@ -36,6 +36,8 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 	private Camera camera = null;
 	
 	private Button photoButton = null;
+	
+	private String imagePath = "/sdcard/mypic.jpeg";
 	
 	
 	@Override
@@ -86,7 +88,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 			camera.startPreview();
 			
 			
-			File file = new File("/sdcard/mypic.jpeg");
+			File file = new File(imagePath);
 			if(!file.exists()) {
 				try {
 					file.createNewFile();
@@ -122,7 +124,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 			Canvas canvas = photoHolder.lockCanvas();
 			
 			Paint paint = new Paint();
-			Bitmap bitmap = BitmapFactory.decodeFile("/sdcard/mypic.jpeg");
+			Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
 			
 			Matrix matrix = new Matrix();
 			//matrix.postScale(((float)canvas.getWidth())/bitmap.getWidth(), ((float)canvas.getHeight())/bitmap.getHeight());
@@ -147,9 +149,13 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 			// Lock the process canvas
 			canvas = processHolder.lockCanvas();
 			paint = new Paint();
-			bitmap = convertGreyImg(bitmap);
+			bitmap = ImageCompare.convertGreyImg(bitmap);
 			canvas.drawBitmap(bitmap, 0, 0, paint);
 			processHolder.unlockCanvasAndPost(canvas);
+			
+			if(checker != null) {
+				checker.photoCallback(imagePath);
+			}
 		}
 	};
 	
@@ -166,6 +172,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 	public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
 		// TODO Auto-generated method stub
 		camera.startPreview();
+		hasStartPreview = true;
 	}
 
 	@Override
@@ -188,11 +195,24 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 	
     @Override  
     protected void onResume() {  
-        if (camera == null)  
-           	camera = Camera.open();  
+        if (camera == null) {  
+           	camera = Camera.open();
+           	camera.setDisplayOrientation(90);
+           	try {
+				camera.setPreviewDisplay(previewHolder);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+        if(!hasStartPreview) {
+        	camera.startPreview();
+        	hasStartPreview = true;
+        }
         super.onResume();  
     } 
     
+    boolean hasStartPreview = false;
     @Override  
     protected void onPause() {  
     	/*
@@ -202,34 +222,33 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
         */ 
         camera.release();  
         camera = null;  
-        //hasStartPreview = false;  
+        hasStartPreview = false;  
         super.onPause();  
-    } 
+    }
+
+	@Override
+	public void takePhoto(String path) {
+		// TODO Auto-generated method stub
+		imagePath = path;
+		if(camera != null) {
+			camera.takePicture(null, null, pictureCallback);
+		}
+	}
+
+	
+	private Checker checker = null;
+	@Override
+	public void setCallback(Checker cr) {
+		// TODO Auto-generated method stub
+		checker = cr;
+	}
+
+	@Override
+	public void checkCallback(boolean empty) {
+		// TODO Auto-generated method stub
+		
+	} 
 
     
-    public Bitmap convertGreyImg(Bitmap img) {
-    	int width = img.getWidth();
-    	int height = img.getHeight();
-
-    	int []pixels = new int[width * height];
-
-    	img.getPixels(pixels, 0, width, 0, 0, width, height);
-    	int alpha = 0xFF << 24;
-    	for(int i = 0; i < height; i++) {
-	    	for(int j = 0; j < width; j++) {
-		    	int grey = pixels[width * i + j];
-		
-		    	int red = ((grey & 0x00FF0000 ) >> 16);
-		    	int green = ((grey & 0x0000FF00) >> 8);
-		    	int blue = (grey & 0x000000FF);
-		
-		    	grey = (int)((float) red * 0.229 + (float)green * 0.587 + (float)blue * 0.114);
-		    	grey = alpha | (grey << 16) | (grey << 8) | grey;
-		    	pixels[width * i + j] = grey;
-	    	}
-    	}
-    	Bitmap result = Bitmap.createBitmap(width, height, Config.RGB_565);
-    	result.setPixels(pixels, 0, width, 0, 0, width, height);
-    	return result;
-    } 
+ 
 }
