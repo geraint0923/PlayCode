@@ -40,10 +40,23 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback,ICa
 	private String imagePath = "/sdcard/mypic.jpeg";
 	
 	
+	private Button calibrateButton = null;
+	private Button beginButton = null;
+	
+	private Checker useChecker = null;
+	
+	private MainActivity instance = null;
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		instance = this;
+		
+		useChecker = new Checker();
+		useChecker.setCamera(instance);
 		
 		camera = Camera.open();
 		
@@ -64,6 +77,32 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback,ICa
 				// TODO Auto-generated method stub
 				if(camera != null) {
 					camera.takePicture(null, null, pictureCallback);
+				}
+			}
+			
+		});
+		
+		calibrateButton = (Button) this.findViewById(R.id.calibrate_button);
+		calibrateButton.setOnClickListener(new Button.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				if(useChecker != null) {
+					useChecker.calibrate(5000);
+				}
+			}
+			
+		});
+		
+		beginButton = (Button) this.findViewById(R.id.begin_button);
+		beginButton.setOnClickListener(new Button.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				// TODO Auto-generated method stub
+				if(useChecker != null) {
+					useChecker.checkEmpty(instance);
 				}
 			}
 			
@@ -243,10 +282,16 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback,ICa
 		checker = cr;
 	}
 
+	
+	
 	@Override
 	public void checkCallback(boolean empty) {
 		// TODO Auto-generated method stub
-		
+		if(empty) {
+			beginButton.setText("true");
+		} else {
+			beginButton.setText("false");
+		}
 	} 
 
     

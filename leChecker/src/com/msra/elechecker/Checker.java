@@ -30,9 +30,11 @@ public class Checker implements Runnable {
 		camera.setCallback(this);
 	}
 	
+	/*
 	public void setCheckerCallback(ICheckerCallback cb) {
 		checkerCallback = cb;
 	}
+	*/
 	
 	public void photoCallback(String path) {
 		Bitmap bitmap = ImageCompare.convertGreyImg(BitmapFactory.decodeFile(path));
@@ -44,6 +46,9 @@ public class Checker implements Runnable {
 				hasCalibrated = false;
 			}
 		} else {
+			if(!hasCalibrated) {
+				return;
+			}
 			if(compare == null) {
 				compare = new ImageCompare(ImageCompare.COMPARE_ABS);
 			}

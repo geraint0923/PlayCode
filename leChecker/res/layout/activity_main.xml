@@ -12,14 +12,6 @@
         android:layout_x="0dp"
         android:layout_y="50dp" />
 
-    <Button
-        android:id="@+id/photo_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_x="36dp"
-        android:layout_y="2dp"
-        android:text="Take" />
-
     <SurfaceView
         android:id="@+id/photo_surface"
         android:layout_width="117dp"
@@ -33,5 +25,29 @@
         android:layout_height="94dp"
         android:layout_x="182dp"
         android:layout_y="347dp" />
+
+    <Button
+        android:id="@+id/photo_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="13dp"
+        android:layout_y="2dp"
+        android:text="Take" />
+
+    <Button
+        android:id="@+id/calibrate_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="88dp"
+        android:layout_y="3dp"
+        android:text="Calibrate" />
+
+    <Button
+        android:id="@+id/begin_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="184dp"
+        android:layout_y="4dp"
+        android:text="Begin Photos" />
 
 </AbsoluteLayout>
