@@ -36,6 +36,8 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback,ICa
 	private SurfaceView processSurface = null;
 	private SurfaceHolder processHolder = null;
 	
+	private Accelerometer accelerometer = null;
+	
 	private Camera camera = null;
 	
 	private Button photoButton = null;
@@ -83,6 +85,8 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback,ICa
 		useChecker.setCamera(instance);
 		
 		initCamera();
+		
+		accelerometer = new Accelerometer(this);
 		
 		previewSurface = (SurfaceView) this.findViewById(R.id.preview_surface);
 		photoSurface = (SurfaceView) this.findViewById(R.id.photo_surface);
