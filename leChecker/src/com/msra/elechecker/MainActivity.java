@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.List;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -12,7 +13,9 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
 import android.hardware.Camera.PictureCallback;
+import android.hardware.Camera.Size;
 import android.os.Bundle;
 import android.app.Activity;
 import android.util.Log;
@@ -37,7 +40,9 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback,ICa
 	
 	private Button photoButton = null;
 	
-	private String imagePath = "/sdcard/mypic.jpeg";
+	private String imagePath = null;
+	
+	private String imagePathPrefix = "/sdcard/ele_images/sample_";
 	
 	
 	private Button calibrateButton = null;
@@ -47,6 +52,25 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback,ICa
 	
 	private MainActivity instance = null;
 	
+	private void initCamera() {
+		camera = Camera.open();
+		Parameters paras = camera.getParameters();
+		List<Size> sList = paras.getSupportedPictureSizes();
+		int minW = 99999, minH = 99999;
+		for(int i = 0; i < sList.size(); ++i) {
+			int w = sList.get(i).width;
+			int h = sList.get(i).height;
+			if(w * h < minW * minH) {
+				minW = w;
+				minH = h;
+			}
+		}
+		paras.setPictureSize(minW, minH);
+		paras.setJpegQuality(66);
+		camera.setParameters(paras);
+		
+		//camera.setDisplayOrientation(90);
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +82,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback,ICa
 		useChecker = new Checker();
 		useChecker.setCamera(instance);
 		
-		camera = Camera.open();
-		
-		camera.setDisplayOrientation(90);
+		initCamera();
 		
 		previewSurface = (SurfaceView) this.findViewById(R.id.preview_surface);
 		photoSurface = (SurfaceView) this.findViewById(R.id.photo_surface);
@@ -101,9 +123,29 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback,ICa
 			@Override
 			public void onClick(View arg0) {
 				// TODO Auto-generated method stub
+				/*
 				if(useChecker != null) {
 					useChecker.checkEmpty(instance);
 				}
+				*/
+				new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						while(true) {
+							try {
+								Thread.sleep(1000);
+								useChecker.checkEmpty(instance);
+							} catch (InterruptedException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							
+						}
+					}
+					
+				}).start();
 			}
 			
 		});
@@ -126,7 +168,8 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback,ICa
 			System.out.println("***********************I have take a photo!!!!!**************size:"+ arg0);
 			camera.startPreview();
 			
-			
+			imagePath = imagePathPrefix + System.currentTimeMillis() + ".jpeg";
+			System.out.println("path:"+imagePath+" prefix:"+imagePathPrefix);
 			File file = new File(imagePath);
 			if(!file.exists()) {
 				try {
@@ -156,7 +199,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback,ICa
 				e.printStackTrace();
 			}
 			
-			System.out.println("=================I have take a photo!!!!!===================size:"+ arg0);
+			System.out.println("=================I have take a photo!!!!!===================size:"+ arg0 + imagePath);
 			
 			
 			// Lock the photo canvas
@@ -164,19 +207,23 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback,ICa
 			
 			Paint paint = new Paint();
 			Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+			System.out.println("imagePath:"+imagePath);
 			
-			Matrix matrix = new Matrix();
+			
+			//Matrix matrix = new Matrix();
 			//matrix.postScale(((float)canvas.getWidth())/bitmap.getWidth(), ((float)canvas.getHeight())/bitmap.getHeight());
-			matrix.postRotate(90);
-			matrix.postScale(((float)canvas.getWidth())/bitmap.getHeight(), ((float)canvas.getHeight())/bitmap.getWidth());
+			//matrix.postRotate(90);
+			//matrix.postScale(((float)canvas.getWidth())/bitmap.getHeight(), ((float)canvas.getHeight())/bitmap.getWidth());
 			
-			bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+			//bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 			
+			bitmap = Bitmap.createScaledBitmap(bitmap, canvas.getWidth(), canvas.getHeight(), true);
 			//bitmap = Bitmap.createScaledBitmap(bitmap, canvas.getWidth(), canvas.getHeight(), true);
 			
+			/*
 			int[] pixs = new int[bitmap.getWidth() * bitmap.getHeight()];
 			bitmap.getPixels(pixs, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
-			
+			*/
 			
 			canvas.drawBitmap(bitmap, 0, 0, paint);
 			
@@ -192,9 +239,13 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback,ICa
 			canvas.drawBitmap(bitmap, 0, 0, paint);
 			processHolder.unlockCanvasAndPost(canvas);
 			
+			
+			// we don't implement the callback now
+			/*
 			if(checker != null) {
 				checker.photoCallback(imagePath);
 			}
+			*/
 		}
 	};
 	
@@ -235,8 +286,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback,ICa
     @Override  
     protected void onResume() {  
         if (camera == null) {  
-           	camera = Camera.open();
-           	camera.setDisplayOrientation(90);
+           	initCamera();
            	try {
 				camera.setPreviewDisplay(previewHolder);
 			} catch (IOException e) {
@@ -268,7 +318,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback,ICa
 	@Override
 	public void takePhoto(String path) {
 		// TODO Auto-generated method stub
-		imagePath = path;
+		//imagePath = path;
 		if(camera != null) {
 			camera.takePicture(null, null, pictureCallback);
 		}
