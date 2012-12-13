@@ -302,6 +302,8 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback,ICa
         	camera.startPreview();
         	hasStartPreview = true;
         }
+        
+        accelerometer.start();
         super.onResume();  
     } 
     
@@ -316,6 +318,9 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback,ICa
         camera.release();  
         camera = null;  
         hasStartPreview = false;  
+        
+        accelerometer.stop();
+        
         super.onPause();  
     }
 

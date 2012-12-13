@@ -9,10 +9,21 @@ import android.hardware.SensorManager;
 
 public class Accelerometer {
 	
+	private SensorManager sensorManager = null;
+	
 	public Accelerometer(Context ctx) {
-		SensorManager sensorManager = (SensorManager) ctx.getSystemService(Context.SENSOR_SERVICE);
+		sensorManager = (SensorManager) ctx.getSystemService(Context.SENSOR_SERVICE);
+	}
+	
+	public void start() {
 		sensorManager.registerListener(accListener, sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER), SensorManager.SENSOR_DELAY_NORMAL);
 	}
+	
+	public void stop() {
+		sensorManager.unregisterListener(accListener);
+	}
+	
+	
 	
 	private SensorEventListener accListener = new SensorEventListener() {
 
