@@ -27,6 +27,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/batch_text"
         android:layout_alignParentLeft="true"
+        android:layout_alignRight="@+id/trigger_btn"
         android:text="Batch" />
 
     <EditText
@@ -36,5 +37,17 @@
         android:layout_alignBottom="@+id/trigger_btn"
         android:layout_alignParentRight="true"
         android:ems="10" />
+
+    <EditText
+        android:id="@+id/count_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:ems="10" >
+
+        <requestFocus />
+    </EditText>
 
 </RelativeLayout>
