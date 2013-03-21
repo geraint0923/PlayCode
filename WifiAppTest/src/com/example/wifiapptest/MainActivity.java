@@ -101,6 +101,10 @@ public class MainActivity extends Activity {
         
         bindService(intent, serviceConnection, Service.BIND_AUTO_CREATE);  
 		
+		
+		
+		
+		
 	//	initSocket(PORT);
 	//	initThread();
 	//	initAlarmManager(1000);
