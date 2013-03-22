@@ -294,7 +294,7 @@ public class TestService extends Service implements Runnable {
 	private DatagramPacket packet = null;
 	
 	
-	private String destIP = "192.168.1.142";
+	private String destIP = "192.168.1.113";
 	private int destPort = 2323;
 	private int packetCount = 1000;
 	
