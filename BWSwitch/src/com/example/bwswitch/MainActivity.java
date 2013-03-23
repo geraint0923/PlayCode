@@ -6,17 +6,24 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.jar.Attributes.Name;
 
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.R.integer;
+import android.R.string;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -59,6 +66,10 @@ public class MainActivity extends Activity {
 			case 2:
 				Toast.makeText(instance, "read failed!", Toast.LENGTH_LONG).show();
 				return;
+			case 3:
+				Toast.makeText(instance, "wifi initial!->"+wifiAdmin.getSSID(), Toast.LENGTH_LONG).show();
+				
+				return;
 
 			default:
 				break;
@@ -79,7 +90,7 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		instance = this;
 		
-		
+		System.out.println("OK");
 		Thread thread = new Thread(new Runnable() {
 			
 			@Override
@@ -112,6 +123,40 @@ public class MainActivity extends Activity {
 					}
 					System.out.println("Here is "+listResults.get(i).SSID);
 				}
+				//mHandler.sendEmptyMessage(3);
+				
+				while(true) {
+					String ssid = wifiAdmin.getSSID();
+					if(ssid != null && ssid.equals("dd-wrt")) {
+						//mHandler.sendEmptyMessage(3);
+						break;
+					}
+				}
+				
+				try {
+					DatagramSocket socket = new DatagramSocket(3333);
+					while(true) {
+						byte[] data = (""+System.currentTimeMillis()+"\n").getBytes();
+						DatagramPacket sPacket;
+						try {
+							sPacket = new DatagramPacket(data, data.length, 
+									InetAddress.getByName("192.168.1.113"), 3333);
+							socket.send(sPacket);
+							//mHandler.sendEmptyMessage(3);
+						} catch (UnknownHostException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+					}
+				} catch (SocketException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 			}
 		});
 		thread.start();

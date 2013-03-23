@@ -135,6 +135,11 @@ public class WifiAdmin {
     public String getWifiInfo() { 
         return (mWifiInfo == null) ? "NULL" : mWifiInfo.toString(); 
     } 
+    
+    public String getSSID() {
+    	mWifiInfo = mWifiManager.getConnectionInfo(); 
+    	return (mWifiInfo == null) ? "NULL" : mWifiInfo.getSSID(); 
+    }
 
     // 添加一个网络并连接  
     public void addNetwork(WifiConfiguration wcg) { 
