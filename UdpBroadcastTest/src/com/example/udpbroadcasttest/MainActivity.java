@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -91,12 +94,32 @@ public class MainActivity extends Activity {
 					} catch (UnsupportedEncodingException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+						break;
 					}
 				}
 			}
 		});
 		thread.start();
 		
+		Thread sendThread = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				while(true) {
+					udpBroadcaster.send("I am YY".getBytes(), "192.168.199.255");
+					System.out.println("OK,I sent one");
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						break;
+					}
+				}
+			}
+		});
+		sendThread.start();
 	}
 
 	@Override
@@ -114,6 +137,20 @@ public class MainActivity extends Activity {
 			try {
 				socket = new DatagramSocket(port);
 			} catch (SocketException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		public void send(byte[] buffer, String addr) {
+			DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+			try {
+				packet.setSocketAddress(new InetSocketAddress(InetAddress.getByName(addr), 33333));
+				socket.send(packet);
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
