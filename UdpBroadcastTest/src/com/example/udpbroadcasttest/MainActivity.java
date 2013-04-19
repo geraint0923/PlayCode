@@ -8,19 +8,32 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.List;
 
+import com.example.udpbroadcasttest.Discoverer.Peer;
+
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.R.integer;
 import android.app.Activity;
+import android.content.Context;
+import android.telephony.TelephonyManager;
 import android.view.Menu;
 import android.widget.EditText;
+import android.widget.MultiAutoCompleteTextView;
 
 public class MainActivity extends Activity {
 
 	private static final int APPENDTEXT = 1;
 	private static final int SETTEXT = 2;
+	
+	public String getIMIE() {
+		TelephonyManager tm = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
+		String imie = tm.getDeviceId();
+		return imie;
+	}
 	
 	private Handler uiHandler = new Handler() {
 		public void handleMessage(Message msg) {
@@ -65,13 +78,56 @@ public class MainActivity extends Activity {
 		msg.setData(bdl);
 		uiHandler.sendMessage(msg);
 	}
+	private Discoverer discoverer;
+	class DiscoverTest implements Runnable {
+		public DiscoverTest(Context ctx, String id) {
+			// TODO Auto-generated constructor stub
+			discoverer = Discoverer.getInstance();
+			if(discoverer == null)
+				System.out.println("null discoverer");
+			else 
+				System.out.println("not " +"null discoverer");
+			discoverer.listen();
+			discoverer.discover();
+		}
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			while(true) {
+				StringBuilder sb = new StringBuilder();
+				sb.append("***************************************\n");
+				List<Peer> list = discoverer.getPeerList();
+				for(Peer peer : list) {
+					sb.append(peer+"\n");
+				}
+				sb.append("***************************************\n");
+				setText(sb.toString());
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+		WifiManager wifi = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
+		Discoverer.setWifiManager(wifi);
 		editText = (EditText) this.findViewById(R.id.text_edit);
+		
+		System.out.println("myIMIE:"+getIMIE());
+		Discoverer.setUserId(getIMIE());
+		Thread thread = new Thread(new DiscoverTest(this, getIMIE()));
+		thread.start();
+		
+		/*
 		udpBroadcaster = new UdpBroadcaster(33333);
 		
 		Thread thread = new Thread(new Runnable() {
@@ -120,6 +176,7 @@ public class MainActivity extends Activity {
 			}
 		});
 		sendThread.start();
+		*/
 	}
 
 	@Override
@@ -172,4 +229,8 @@ public class MainActivity extends Activity {
 		
 	}
 
+	public void onStop() {
+		super.onStop();
+		Discoverer.destroyDiscoverer();
+	}
 }
