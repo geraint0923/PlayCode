@@ -9,4 +9,4 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-UpdateServer::Application.config.secret_key_base = 'cb2b18f5f0f3a03daa9acf6d5440235ffe9506d18b3139c01c1ff208bab7d495cf345967c8840dc777d590879a460c9e82c5431075626b7334113a5cf09e9d68'
+ReportServer::Application.config.secret_key_base = 'b2f0db43dd847ced8779b3ff962e239a2dc4e4807bd5b27bc1c4870a4382a27843c58e9717732082fa816b8139b178a0785f0aff6d9dc9e50cd009cf12281496'
