@@ -1,5 +1,19 @@
+include Mongo
+require 'pp'
 class LogReportController < ApplicationController
 	skip_before_filter :verify_authenticity_token
+
+	def traverse_hash(inmap, outmap)
+		inmap.each do |key, value|
+			if Hash === value
+				om = Hash.new
+				outmap[key.gsub(".", "_")] = om
+				traverse_hash(value, om)
+			else
+				outmap[key.gsub(".", "_")] = value
+			end
+		end
+	end
 
 	def report
 		puts "FILE FINE LOG!"
@@ -9,8 +23,15 @@ class LogReportController < ApplicationController
 #		f.puts ss
 #		f.close
 #		pp params[:log_report]
-#		mongo_client = MongoClient.new
-#		puts mongo_client.database_names
+		
+		mongo_client = MongoClient.new
+		puts mongo_client.database_names
+		db = mongo_client.db("test")
+		coll = db.collection("log")
+		recs = Hash.new
+		traverse_hash(params[:log_report], recs)
+#		pp recs
+		coll.insert(recs)
 		render :json => {
 			'result' => 'OK'
 		}.to_json
