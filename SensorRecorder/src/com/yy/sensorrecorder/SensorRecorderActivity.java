@@ -2,6 +2,7 @@ package com.yy.sensorrecorder;
 
 import java.io.IOException;
 
+import android.hardware.Camera;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.app.Activity;
@@ -18,6 +19,7 @@ public class SensorRecorderActivity extends Activity implements SurfaceHolder.Ca
 	private Button startButton, stopButton;
 	private MediaRecorder mediaRecorder;
 	private SurfaceHolder surfaceHolder;
+	private Camera camera;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +40,9 @@ public class SensorRecorderActivity extends Activity implements SurfaceHolder.Ca
 				if(mediaRecorder != null) {
 					
 				}
+				camera = initCamera();
 				mediaRecorder = new MediaRecorder();
+				mediaRecorder.setCamera(camera);
 				mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
 				mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
 				mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
@@ -46,6 +50,7 @@ public class SensorRecorderActivity extends Activity implements SurfaceHolder.Ca
 				mediaRecorder.setVideoFrameRate(20);
 				mediaRecorder.setPreviewDisplay(surfaceHolder.getSurface());
 				mediaRecorder.setOutputFile("/sdcard/test/test.mp4");
+				//mediaRecorder.setOrientationHint(90);
 				
 				try {
 					mediaRecorder.prepare();
@@ -70,15 +75,32 @@ public class SensorRecorderActivity extends Activity implements SurfaceHolder.Ca
 				if(mediaRecorder != null) {
 					mediaRecorder.stop();
 					mediaRecorder.release();
+					if(camera != null) {
+						camera.lock();
+						camera.release();
+						camera = null;
+					}
 					mediaRecorder = null;
 				}
 			}
 			
 		});
+		initSurfaceView();
+	}
+	
+	private void initSurfaceView() {
 		surfaceView = (SurfaceView) findViewById(R.id.surfaceView);
 		SurfaceHolder holder = surfaceView.getHolder();
 		holder.addCallback(this);
 		holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+		
+	}
+	
+	private Camera initCamera() {
+		Camera c = Camera.open();
+		c.setDisplayOrientation(90);
+		c.unlock();
+		return c;
 	}
 
 	@Override
@@ -106,6 +128,7 @@ public class SensorRecorderActivity extends Activity implements SurfaceHolder.Ca
 		surfaceView = null;
 		surfaceHolder = null;
 		//mediaRecorder = null;
+		System.out.println("destroy!!!!!!!!!!!!!!!!!");
 	}
 
 }
