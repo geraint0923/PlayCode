@@ -5,6 +5,8 @@ import java.io.IOException;
 import android.hardware.Camera;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.app.Activity;
 import android.view.Menu;
 import android.view.SurfaceHolder;
@@ -12,6 +14,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.TextView;
 
 public class SensorRecorderActivity extends Activity implements SurfaceHolder.Callback {
 
@@ -20,6 +23,17 @@ public class SensorRecorderActivity extends Activity implements SurfaceHolder.Ca
 	private MediaRecorder mediaRecorder;
 	private SurfaceHolder surfaceHolder;
 	private Camera camera;
+	private TextView textView;
+	
+	private Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			System.out.println("adfasdfasdfasdad");
+			if(textView != null && msg.getData() != null) {
+				String text = msg.getData().getString("text", "none");
+				textView.setText(text);
+			}
+		}
+	};
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +45,7 @@ public class SensorRecorderActivity extends Activity implements SurfaceHolder.Ca
 	private void init() {
 		startButton = (Button) findViewById(R.id.startButton);
 		stopButton = (Button) findViewById(R.id.stopButton);
+		textView = (TextView) findViewById(R.id.textView);
 		startButton.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -62,7 +77,7 @@ public class SensorRecorderActivity extends Activity implements SurfaceHolder.Ca
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
+				showText(System.currentTimeMillis()+"");
 			}
 			
 		});
@@ -128,7 +143,14 @@ public class SensorRecorderActivity extends Activity implements SurfaceHolder.Ca
 		surfaceView = null;
 		surfaceHolder = null;
 		//mediaRecorder = null;
-		System.out.println("destroy!!!!!!!!!!!!!!!!!");
+	}
+	
+	public void showText(String str) {
+		Bundle bundle = new Bundle();
+		bundle.putString("text", str);
+		Message msg = new Message();
+		msg.setData(bundle);
+		handler.sendMessage(msg);
 	}
 
 }
