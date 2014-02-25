@@ -52,6 +52,8 @@ public class SensorRecorderActivity extends Activity implements SurfaceHolder.Ca
 	private void init() {
 		startButton = (Button) findViewById(R.id.startButton);
 		stopButton = (Button) findViewById(R.id.stopButton);
+		startButton.setEnabled(true);
+		stopButton.setEnabled(false);
 		textView = (TextView) findViewById(R.id.textView);
 		startButton.setOnClickListener(new OnClickListener() {
 
@@ -86,6 +88,9 @@ public class SensorRecorderActivity extends Activity implements SurfaceHolder.Ca
 					if(!dir.exists())
 						dir.mkdirs();
 					workDir = dir.getAbsolutePath();
+					
+					startButton.setEnabled(false);
+					stopButton.setEnabled(true);
 				} catch (IllegalStateException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -121,6 +126,9 @@ public class SensorRecorderActivity extends Activity implements SurfaceHolder.Ca
 					}
 					
 					mediaRecorder = null;
+					
+					stopButton.setEnabled(false);
+					startButton.setEnabled(true);
 				}
 			}
 			
