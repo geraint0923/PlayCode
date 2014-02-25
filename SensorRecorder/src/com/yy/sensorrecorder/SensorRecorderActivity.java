@@ -1,5 +1,6 @@
 package com.yy.sensorrecorder;
 
+import java.io.File;
 import java.io.IOException;
 
 import android.hardware.Camera;
@@ -26,6 +27,11 @@ public class SensorRecorderActivity extends Activity implements SurfaceHolder.Ca
 	private TextView textView;
 	
 	private SensorController sensorController;
+	
+	private String workDir;
+	
+	private final String VIDEO_TMP_PATH = "/sdcard/test/test.mp4";
+	private final String WORK_ROOT = "/sdcard/test/";
 	
 	private Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
@@ -65,14 +71,21 @@ public class SensorRecorderActivity extends Activity implements SurfaceHolder.Ca
 				mediaRecorder.setVideoSize(176, 144);
 				mediaRecorder.setVideoFrameRate(20);
 				mediaRecorder.setPreviewDisplay(surfaceHolder.getSurface());
-				mediaRecorder.setOutputFile("/sdcard/test/test.mp4");
+				mediaRecorder.setOutputFile(VIDEO_TMP_PATH);
 				//mediaRecorder.setOrientationHint(90);
 				
 				try {
 					mediaRecorder.prepare();
 					mediaRecorder.start();
 					
+					long ts = System.currentTimeMillis();
+					
 					sensorController.startSensors();
+					
+					File dir = new File(WORK_ROOT + ts);
+					if(!dir.exists())
+						dir.mkdirs();
+					workDir = dir.getAbsolutePath();
 				} catch (IllegalStateException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -80,7 +93,6 @@ public class SensorRecorderActivity extends Activity implements SurfaceHolder.Ca
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				showText(System.currentTimeMillis()+"");
 			}
 			
 		});
@@ -99,6 +111,15 @@ public class SensorRecorderActivity extends Activity implements SurfaceHolder.Ca
 						camera.release();
 						camera = null;
 					}
+					
+					File vf = new File(VIDEO_TMP_PATH);
+					if(vf.exists() && workDir != null) {
+						vf.renameTo(new File(workDir + "/video.mp4"));
+						sensorController.dumpToFile(workDir + "/data.log");
+						sensorController.clearData();
+						workDir = null;
+					}
+					
 					mediaRecorder = null;
 				}
 			}
