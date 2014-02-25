@@ -145,12 +145,18 @@ public class SensorRecorderActivity extends Activity implements SurfaceHolder.Ca
 		//mediaRecorder = null;
 	}
 	
-	public void showText(String str) {
+	private void showText(String str) {
 		Bundle bundle = new Bundle();
 		bundle.putString("text", str);
 		Message msg = new Message();
 		msg.setData(bundle);
 		handler.sendMessage(msg);
+	}
+	
+	public class TextPrinter {
+		public void showText(String str) {
+			SensorRecorderActivity.this.showText(str);
+		}
 	}
 
 }

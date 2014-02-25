@@ -49,6 +49,7 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/button_layout"
         android:text="hahaha"
-        android:textColor="#00ff00" />
+        android:textColor="#00ff00"
+        android:textSize="9sp" />
 
 </RelativeLayout>
