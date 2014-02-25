@@ -10,6 +10,7 @@ public abstract class SensorPrinter implements SensorEventListener {
 	protected Sensor sensor;
 	protected SensorController sensorController;
 	protected boolean hasStarted = false;
+	protected String sensorName = "DefaultSensor";
 	
 	public void init(SensorManager sm, SensorController sc) {
 		sensorManager = sm;
@@ -41,5 +42,11 @@ public abstract class SensorPrinter implements SensorEventListener {
 	}
 	
 	@Override
-	public abstract void onSensorChanged(SensorEvent event);
+	public void onSensorChanged(SensorEvent event) {
+		if(event != null && sensorController != null) {
+			sensorController.reportData(this, outputData(event));
+		}
+	}
+	
+	public abstract String outputData(SensorEvent event);
 }

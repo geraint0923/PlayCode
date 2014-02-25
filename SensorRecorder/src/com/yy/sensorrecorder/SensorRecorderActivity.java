@@ -25,9 +25,10 @@ public class SensorRecorderActivity extends Activity implements SurfaceHolder.Ca
 	private Camera camera;
 	private TextView textView;
 	
+	private SensorController sensorController;
+	
 	private Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
-			System.out.println("adfasdfasdfasdad");
 			if(textView != null && msg.getData() != null) {
 				String text = msg.getData().getString("text", "none");
 				textView.setText(text);
@@ -70,6 +71,8 @@ public class SensorRecorderActivity extends Activity implements SurfaceHolder.Ca
 				try {
 					mediaRecorder.prepare();
 					mediaRecorder.start();
+					
+					sensorController.startSensors();
 				} catch (IllegalStateException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -90,6 +93,7 @@ public class SensorRecorderActivity extends Activity implements SurfaceHolder.Ca
 				if(mediaRecorder != null) {
 					mediaRecorder.stop();
 					mediaRecorder.release();
+					sensorController.stopSensors();
 					if(camera != null) {
 						camera.lock();
 						camera.release();
@@ -101,6 +105,8 @@ public class SensorRecorderActivity extends Activity implements SurfaceHolder.Ca
 			
 		});
 		initSurfaceView();
+		
+		sensorController = new SensorController(this, new TextPrinter());
 	}
 	
 	private void initSurfaceView() {
