@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
+import 	android.media.CamcorderProfile;
 
 public class SensorRecorderActivity extends Activity implements SurfaceHolder.Callback {
 
@@ -68,12 +69,18 @@ public class SensorRecorderActivity extends Activity implements SurfaceHolder.Ca
 				mediaRecorder = new MediaRecorder();
 				mediaRecorder.setCamera(camera);
 				mediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+				mediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
+				mediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_480P));
+				/*
 				mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
 				mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-				mediaRecorder.setVideoSize(176, 144);
-				mediaRecorder.setVideoFrameRate(20);
+				mediaRecorder.setVideoSize(640, 480);
+				mediaRecorder.setVideoFrameRate(10);
+				*/
 				mediaRecorder.setPreviewDisplay(surfaceHolder.getSurface());
 				mediaRecorder.setOutputFile(VIDEO_TMP_PATH);
+				//System.out.println(mediaRecorder.getVideoEncodingBitRate());
+				
 				//mediaRecorder.setOrientationHint(90);
 				
 				try {
